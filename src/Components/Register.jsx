@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import '../Stylesheets/Register.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const [clientInputs, updateClientInputs] = useState({
@@ -8,6 +10,7 @@ const Register = () => {
         "Password": ""
     });
     const [errorMessage, updateErrorMessage] = useState("");
+    const navigate = useNavigate();
 
     const updateName = (e) => {
         updateClientInputs({...clientInputs, "Name": e.target.value})
@@ -22,10 +25,26 @@ const Register = () => {
     }
 
     const onSubmitStop = (e) => {
-        let reg = /^.+@.+[.].+$/ig;
+        let reg = /^[A-Z0-9+_.-]+@[A-Z0-9-]+[.][A-Z]+$/ig;
         let validEmail = reg.test(clientInputs.Email);
 
-        validEmail ? updateErrorMessage("") : updateErrorMessage("Please enter a valid email.");
+        if(!validEmail) {
+            updateErrorMessage("Please make sure all fields are answered and valid.");
+            return;
+        }
+
+        axios.post('https://localhost:7108/api/User', clientInputs)
+        .then(function(res) {
+            console.log(res);
+            updateErrorMessage("Account created successfully! You wil be redirected in 5 seconds.");
+            setTimeout(() => {
+                navigate("/login");
+            }, 5000)
+        })
+        .catch(function(error) {
+            console.log(error);
+            updateErrorMessage("Please make sure all fields are answered and valid.");
+        });
     }
 
     return(
