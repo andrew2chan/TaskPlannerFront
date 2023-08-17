@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import '../Stylesheets/Register.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +10,7 @@ const Register = () => {
         "Email": "",
         "Password": ""
     });
+    const domain = useSelector((state) => state.domain.value);
     const [errorMessage, updateErrorMessage] = useState("");
     const navigate = useNavigate();
 
@@ -33,7 +35,7 @@ const Register = () => {
             return;
         }
 
-        axios.post('https://localhost:7108/api/User', clientInputs)
+        axios.post(`https://${domain}/api/User`, clientInputs)
         .then(function(res) {
             console.log(res);
             updateErrorMessage("Account created successfully! You wil be redirected in 5 seconds.");
