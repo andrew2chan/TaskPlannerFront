@@ -64,7 +64,7 @@ const Login = () => {
                 <br/>
                 <label htmlFor="password">
                     Password<br/>
-                    <input type="text" name="password" id="password" onChange={updatePassword} /><br/>
+                    <input type="password" name="password" id="password" onChange={updatePassword} /><br/>
                 </label>
                 <button type="button" name="submit" onClick={onSubmitStop}>Submit</button>
 

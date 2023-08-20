@@ -38,14 +38,13 @@ const Register = () => {
         axios.post(`https://${domain}/api/User`, clientInputs)
         .then(function(res) {
             console.log(res);
-            updateErrorMessage("Account created successfully! You wil be redirected in 5 seconds.");
-            setTimeout(() => {
-                navigate("/login");
-            }, 5000)
+            updateErrorMessage("Account created successfully!");
+            navigate("/login");
         })
         .catch(function(error) {
             console.log(error);
             updateErrorMessage("Please make sure all fields are answered and valid.");
+            if(error.response.status == 422) updateErrorMessage("Email already in use");
         });
     }
 
