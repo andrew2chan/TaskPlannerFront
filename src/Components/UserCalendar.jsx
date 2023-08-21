@@ -10,10 +10,10 @@ const localizer = dayjsLocalizer(dayjs);
 const UserCalendar = () => {
     const [event, setEvents] = useState([]);
     const domain = useSelector((state) => state.domain.value);
-    const userId = useSelector((state) => state.user.id);
+    const user = useSelector((state) => state.user);
 
     useEffect(function() {
-        axios.get(`https://${domain}/api/Activities/userActivity/${userId}`)
+        axios.get(`https://${domain}/api/Activities/userActivity/${user.id}`)
         .then(function(response) {
             console.log(response);
             
@@ -30,7 +30,7 @@ const UserCalendar = () => {
             console.log(err);
         })
 
-    },[userId]);
+    },[user]);
 
     const [bcView, setBCView] = useState("month")
 
@@ -40,7 +40,7 @@ const UserCalendar = () => {
 
     return (
         <div className="user-calendar">
-            <h1>This is user calendar</h1>
+            <h1>Hello {user.name}!</h1>
             <Calendar
                 localizer={localizer}
                 events={event}

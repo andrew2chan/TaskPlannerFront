@@ -21,7 +21,7 @@ const Navbar = () => {
 
     return (
         <div id="navigation-bar">
-            <div className="logo"><a href="/"><img src="https://helios-i.mashable.com/imagery/articles/00apgKgIAO4EnFfjOgCApRe/hero-image.fill.size_1200x1200.v1619086604.jpg" className="logo" alt="logo" /></a></div>
+            <div className="logo"><Link to="/"><img src="https://helios-i.mashable.com/imagery/articles/00apgKgIAO4EnFfjOgCApRe/hero-image.fill.size_1200x1200.v1619086604.jpg" className="logo" alt="logo" /></Link></div>
             <div className="login-register-buttons">
                 {
                     id == -1 ? (
@@ -34,6 +34,7 @@ const Navbar = () => {
                         <>
                             <Link to="/" className="redirect-buttons" onClick={resetState} >Logout</Link>
                             <Link to="profile" className="redirect-buttons">Profile</Link>
+                            <Link to="usercalendar" className="redirect-buttons">Calendar</Link>
                         </>
                     )
                 }

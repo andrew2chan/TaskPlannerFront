@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import '../Stylesheets/Profile.css';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, Link } from 'react-router-dom';
-import { updateId, updateUserEmail, updateName, updatePlannedTasksId } from '../Slices/userSlice';
+import { Link } from 'react-router-dom';
+import { updateId, updateUserEmail, updatePlannedTasksId, updateName } from '../Slices/userSlice';
 
 const Profile = () => {
     const dataFromSelector = useSelector((state) => state.user);
-    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const [clientInputs, updateClientInputs] = useState({
@@ -27,7 +26,7 @@ const Profile = () => {
     const domain = useSelector((state) => state.domain.value);
     const [errorMessage, updateErrorMessage] = useState("");
 
-    const updateName = (e) => {
+    const updateInputName = (e) => {
         updateClientInputs({...clientInputs, "Name": e.target.value})
     }
 
@@ -51,10 +50,17 @@ const Profile = () => {
 
         axios.put(`https://${domain}/api/User/${dataFromSelector.id}`, clientInputs)
         .then(function(response) {
-            updateErrorMessage("Records have been updated!")
+            updateErrorMessage("Records have been updated!");
+
+            let { Name, Email } = clientInputs;
+
+            dispatch(updateName(Name));
+            dispatch(updateUserEmail(Email));
         })
         .catch(function(err) {
-            updateErrorMessage("There was an error updating your records. Please check your inputs again.")
+            console.log(err);
+            console.log(clientInputs);
+            updateErrorMessage("There was an error updating your records. Please check your inputs again.");
         })
     }
 
@@ -63,7 +69,6 @@ const Profile = () => {
         dispatch(updateUserEmail(""));
         dispatch(updateName(""));
         dispatch(updatePlannedTasksId(-1));
-        //navigate('/'); //redirect to main
     }
 
     const deleteAccount = (e) => {
@@ -84,7 +89,7 @@ const Profile = () => {
                 <strong>Profile</strong><br/><br/>
                 <label htmlFor="name">
                     Name<br/>
-                    <input type="text" name="name" id="name" onChange={updateName} value={clientInputs.Name} /><br/>
+                    <input type="text" name="name" id="name" onChange={updateInputName} value={clientInputs.Name} /><br/>
                 </label>
                 <br/>
                 <label htmlFor="email">
