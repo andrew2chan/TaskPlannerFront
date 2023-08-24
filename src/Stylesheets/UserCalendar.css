@@ -1,0 +1,61 @@
+:root {
+    --add-event: 400px;
+}
+
+.add-event {
+    font-size: 20px;
+    margin: 20px;
+    max-width: var(--add-event);
+    padding: 75px 50px;
+    border: 1px solid var(--text-color);
+    border-radius: 25px;
+}
+
+.usercalendar-header {
+    font-size: 30px;
+}
+
+.start-time-container, .end-time-container {
+    height: 3em;
+    display: flex;
+    align-items: flex-end;
+}
+
+.start-date, .specific-time-container, .end-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.specific-time-inner-container {
+    display: flex;
+    align-items: center;
+}
+
+.specific-time-container {
+    padding-left: 1em;
+}
+
+.add-event button {
+    margin: 30px 0;
+    width: 100%;
+    background-color: white;
+    border: 3px solid var(--text-color);
+    color: var(--text-color);
+    padding: 5px;
+    font-size: 18px;
+}
+
+.add-event input {
+    padding: 10px 0 10px 0px;
+    font-size: 16px;
+    border: 1px solid var(--text-color);
+    outline: none;
+}
+
+.add-event input[type="text"], .add-event input[type="number"] {
+    padding-left: 5px;
+}
+
+.time-containers {
+    margin: 10px 0;
+}

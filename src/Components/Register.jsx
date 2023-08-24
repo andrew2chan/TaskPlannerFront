@@ -71,7 +71,7 @@ const Register = () => {
                 {errorMessage != "" && (
                 <>
                     <br/><br/>
-                    <div className="error-message">
+                    <div className="error-message-registration">
                         {errorMessage}
                     </div>
                 </>

@@ -1,5 +1,5 @@
 :root {
-    --registration-box: 300px;
+    --profile-box: 300px;
 }
 
 .profile-form-container {
@@ -11,7 +11,7 @@
 }
 
 .profile-form {
-    min-width: var(--registration-box);
+    min-width: var(--profile-box);
     max-width: 100%;
     padding: 75px 50px;
     border: 1px solid var(--text-color);
@@ -50,8 +50,8 @@
     box-shadow: 0 0 10px 2px orange;
 }
 
-.error-message {
-    max-width: var(--registration-box);
+.error-message-profile {
+    max-width: var(--profile-box);
 }
 
 .profile-form a {
@@ -60,7 +60,7 @@
 
 .profile-form a.redirect-buttons {
     display: block;
-    min-width: var(--registration-box);
+    min-width: var(--profile-box);
     text-align: center;
     border: 3px solid var(--text-color);
     text-decoration: none;

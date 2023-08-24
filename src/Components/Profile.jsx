@@ -107,7 +107,7 @@ const Profile = () => {
                 {errorMessage != "" && (
                 <>
                     <br/><br/>
-                    <div className="error-message">
+                    <div className="error-message-profile">
                         {errorMessage}
                     </div>
                 </>
