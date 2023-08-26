@@ -14,24 +14,24 @@ const UserCalendar = () => {
     const user = useSelector((state) => state.user);
     const [errorMessage, updateErrorMessage] = useState("");
     const [eventTitle, updateEventTitle] = useState("");
+    const [currentDate, updateCurrentDate] = useState();
     const [startDate, updateStartDate] = useState({
-        "date": null,
-        "hours": -1,
-        "minutes": -1,
-        "seconds": -1
+        "date": new Date(),
+        "hours": 0,
+        "minutes": 0,
+        "seconds": 0
     });
     const [endDate, updateEndDate] = useState({
-        "date": null,
-        "hours": -1,
-        "minutes": -1,
-        "seconds": -1
+        "date": new Date(),
+        "hours": 0,
+        "minutes": 0,
+        "seconds": 0
     });
 
-
-    useEffect(function() {
+    const pullEventsFromBackend = () => {
         axios.get(`https://${domain}/api/Activities/userActivity/${user.id}`)
         .then(function(response) {
-            console.log(response);
+            //console.log(response);
             
             let eventsFromDb = []; //makes a new events array
             for(let i = 0; i < response.data.length; i++) { //go through each even we get back from backend
@@ -45,8 +45,24 @@ const UserCalendar = () => {
         .catch(function(err) {
             console.log(err);
         })
+    }
 
-    },[user]);
+
+    useEffect(pullEventsFromBackend,[user]);
+
+    useEffect(function() {
+        let currDate = new Date();
+        let d = [
+            currDate.getFullYear(),
+            ('0' + (currDate.getMonth() + 1)).slice(-2),
+            ('0' + currDate.getDate()).slice(-2),
+        ]
+        let combinedDate = d.join("-");
+        updateCurrentDate(combinedDate);
+
+        updateStartDate({ ...startDate, date: combinedDate })
+        updateEndDate({ ...endDate, date: combinedDate })
+    },[])
 
     const [bcView, setBCView] = useState("month")
 
@@ -57,51 +73,94 @@ const UserCalendar = () => {
     const updateStartDates = (e) => {
         switch(e.target.id) {
             case 'startDate':
-                updateStartDate({ ...startDate, date: e.target.value })
+                updateStartDate({ ...startDate, date: e.target.value || currentDate })
                 break;
             case 'startHours':
-                updateStartDate({ ...startDate, hours: e.target.value })
+                updateStartDate({ ...startDate, hours: e.target.value || 0 })
                 break;
             case 'startMinutes':
-                updateStartDate({ ...startDate, minutes: e.target.value })
+                updateStartDate({ ...startDate, minutes: e.target.value || 0 })
                 break;
             case 'startSeconds':
-                updateStartDate({ ...startDate, seconds: e.target.value })
+                updateStartDate({ ...startDate, seconds: e.target.value || 0 })
                 break;
             default:
                 break;
         }
         
-        console.log(startDate);
     }
 
     const updateEndDates = (e) => {
         switch(e.target.id) {
             case 'endDate':
-                updateEndDate({ ...endDate, date: e.target.value })
+                updateEndDate({ ...endDate, date: e.target.value || currentDate })
                 break;
             case 'endHours':
-                updateEndDate({ ...endDate, hours: e.target.value })
+                updateEndDate({ ...endDate, hours: e.target.value || 0 })
                 break;
             case 'endMinutes':
-                updateEndDate({ ...endDate, minutes: e.target.value })
+                updateEndDate({ ...endDate, minutes: e.target.value || 0 })
                 break;
             case 'endSeconds':
-                updateEndDate({ ...endDate, seconds: e.target.value })
+                updateEndDate({ ...endDate, seconds: e.target.value || 0 })
                 break;
             default:
                 break;
         }
-
-        console.log(endDate)
     }
 
     const onSubmit = (e) => {
         e.preventDefault()
 
-        if(endDate.date < startDate.date) {
-            updateErrorMessage("Please make sure that the end date is on the same day or after the start date");
+        if(startDate.hours > 23 || endDate.hours > 23 || startDate.hours < 0 || endDate.hours < 0) {
+            updateErrorMessage("Please enter between 0-23 in hours");
+            return;
         }
+
+        if(startDate.minutes > 59 || endDate.minutes > 59 || startDate.minutes < 0 || endDate.minutes < 0) {
+            updateErrorMessage("Please enter between 0-59 in minutes");
+            return;
+        }
+
+        if(startDate.seconds > 59 || endDate.seconds > 59 || startDate.seconds < 0 || endDate.seconds < 0) {
+            updateErrorMessage("Please enter between 0-59 in seconds");
+            return;
+        }
+
+        let finalStartDate = new Date(startDate.date + " " + startDate.hours + ":" + startDate.minutes + ":" + startDate.seconds);
+        let finalEndDate = new Date(endDate.date + " " + endDate.hours + ":" + endDate.minutes + ":" + endDate.seconds);
+
+        if(finalEndDate < finalStartDate) {
+            updateErrorMessage("Please make sure that the end date is on the same day or after the start date");
+            return;
+        }
+
+        if(eventTitle.length == 0) {
+            updateErrorMessage("Please make sure to enter an event title");
+            return;
+        }
+
+        //POST TO BACKEND
+        let postObject = {
+            ActivityName: eventTitle,
+            ActivityStartTime: finalStartDate,
+            ActivityEndTime: finalEndDate
+        }
+
+        axios.post(`https://${domain}/api/Activities?userId=${user.id}`, postObject)
+        .then(function(response) {
+            console.log(response);
+            updateErrorMessage("Successfully added event!");
+            pullEventsFromBackend(); //pulls new data from db to rerender page
+        })
+        .catch(function(err) {
+            console.log(err);
+        })
+
+    }
+
+    const updateET = (e) => {
+        updateEventTitle(e.target.value);
     }
 
     return (
@@ -121,11 +180,11 @@ const UserCalendar = () => {
             <form className="add-event">
                 <strong className="usercalendar-header">Add event</strong><br/><br/>
                 <strong>Event Title</strong><br/><br/>
-                <input type="text" name="eventTitle"></input><br/><br/>
+                <input type="text" name="eventTitle" onChange={updateET}></input><br/><br/>
                 <div className="start-time-container time-containers">
                     <div className="start-date">
                         <strong>Start Time</strong>
-                        <input type="date" name="startDate" id="startDate" onChange={updateStartDates}></input>
+                        <input type="date" name="startDate" id="startDate" onChange={updateStartDates} min={currentDate}></input>
                     </div>
                     <div className="specific-time-container">
                         <strong>Time</strong>
