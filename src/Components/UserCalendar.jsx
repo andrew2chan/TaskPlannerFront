@@ -10,11 +10,11 @@ const localizer = dayjsLocalizer(dayjs);
 
 const UserCalendar = () => {
     const [event, setEvents] = useState([]);
+    const [currentDate, updateCurrentDate] = useState();
     const domain = useSelector((state) => state.domain.value);
     const user = useSelector((state) => state.user);
     const [errorMessage, updateErrorMessage] = useState("");
     const [eventTitle, updateEventTitle] = useState("");
-    const [currentDate, updateCurrentDate] = useState();
     const [startDate, updateStartDate] = useState({
         "date": new Date(),
         "hours": 0,
@@ -22,6 +22,21 @@ const UserCalendar = () => {
         "seconds": 0
     });
     const [endDate, updateEndDate] = useState({
+        "date": new Date(),
+        "hours": 0,
+        "minutes": 0,
+        "seconds": 0
+    });
+
+    const [detailEventTitle, updateDetailEventTitle] = useState("");
+    const [errorMessageDetail, updateErrorMessageDetail] = useState("");
+    const [startDateDetail, updateStartDateDetail] = useState({
+        "date": new Date(),
+        "hours": 0,
+        "minutes": 0,
+        "seconds": 0
+    });
+    const [endDateDetail, updateEndDateDetail] = useState({
         "date": new Date(),
         "hours": 0,
         "minutes": 0,
@@ -68,6 +83,8 @@ const UserCalendar = () => {
 
     const f = (e) => {
         setBCView("week"); //when you click on something in the month calendar, it goes to the weeks calendar
+
+        console.log(e);
     }
 
     const updateStartDates = (e) => {
@@ -103,6 +120,44 @@ const UserCalendar = () => {
                 break;
             case 'endSeconds':
                 updateEndDate({ ...endDate, seconds: e.target.value || 0 })
+                break;
+            default:
+                break;
+        }
+    }
+
+    const updateStartDatesDetail = (e) => {
+        switch(e.target.id) {
+            case 'endDate':
+                updateStartDateDetail({ ...endDate, date: e.target.value || currentDate })
+                break;
+            case 'endHours':
+                updateStartDateDetail({ ...endDate, hours: e.target.value || 0 })
+                break;
+            case 'endMinutes':
+                updateStartDateDetail({ ...endDate, minutes: e.target.value || 0 })
+                break;
+            case 'endSeconds':
+                updateStartDateDetail({ ...endDate, seconds: e.target.value || 0 })
+                break;
+            default:
+                break;
+        }
+    }
+
+    const updateEndDatesDetail = (e) => {
+        switch(e.target.id) {
+            case 'endDate':
+                updateStartDateDetail({ ...endDate, date: e.target.value || currentDate })
+                break;
+            case 'endHours':
+                updateStartDateDetail({ ...endDate, hours: e.target.value || 0 })
+                break;
+            case 'endMinutes':
+                updateStartDateDetail({ ...endDate, minutes: e.target.value || 0 })
+                break;
+            case 'endSeconds':
+                updateStartDateDetail({ ...endDate, seconds: e.target.value || 0 })
                 break;
             default:
                 break;
@@ -156,11 +211,22 @@ const UserCalendar = () => {
         .catch(function(err) {
             console.log(err);
         })
+    }
+
+    const onUpdateEvent = (e) => {
+
+    }
+
+    const onDeleteEvent = (e) => {
 
     }
 
     const updateET = (e) => {
         updateEventTitle(e.target.value);
+    }
+
+    const updateDET = (e) => {
+        updateDetailEventTitle(e.target.value);
     }
 
     return (
@@ -177,55 +243,111 @@ const UserCalendar = () => {
                 onView={setBCView}
             />
 
-            <form className="add-event">
-                <strong className="usercalendar-header">Add event</strong><br/><br/>
-                <strong>Event Title</strong><br/><br/>
-                <input type="text" name="eventTitle" onChange={updateET}></input><br/><br/>
-                <div className="start-time-container time-containers">
-                    <div className="start-date">
-                        <strong>Start Time</strong>
-                        <input type="date" name="startDate" id="startDate" onChange={updateStartDates} min={currentDate}></input>
-                    </div>
-                    <div className="specific-time-container">
-                        <strong>Time</strong>
-                        <div className="specific-time-inner-container">
-                            <input type="number" name="startHours" id="startHours" max="0" min="23" onChange={updateStartDates}></input>
-                            <span>h</span>
-                            <input type="number" name="startMinutes" id="startMinutes" max="0" min="59" onChange={updateStartDates}></input>
-                            <span>m</span>
-                            <input type="number" name="startSeconds" id="startSeconds" max="0" min="59" onChange={updateStartDates}></input>
-                            <span>s</span>
+            <div className="inline-containers">
+                <div class="inline-inner-containers">
+                    <form className="add-event">
+                        <strong className="usercalendar-header">Add event</strong><br/><br/>
+                        <strong>Event Title</strong><br/><br/>
+                        <input type="text" name="eventTitle" onChange={updateET}></input><br/><br/>
+                        <div className="start-time-container time-containers">
+                            <div className="start-date">
+                                <strong>Start Time</strong>
+                                <input type="date" name="startDate" id="startDate" onChange={updateStartDates} min={currentDate}></input>
+                            </div>
+                            <div className="specific-time-container">
+                                <strong>Time</strong>
+                                <div className="specific-time-inner-container">
+                                    <input type="number" name="startHours" id="startHours" max="0" min="23" onChange={updateStartDates}></input>
+                                    <span>h</span>
+                                    <input type="number" name="startMinutes" id="startMinutes" max="0" min="59" onChange={updateStartDates}></input>
+                                    <span>m</span>
+                                    <input type="number" name="startSeconds" id="startSeconds" max="0" min="59" onChange={updateStartDates}></input>
+                                    <span>s</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div className="end-time-container time-containers">
-                    <div className="end-date">
-                        <strong>End Time</strong>
-                        <input type="date" name="endDate" id="endDate" onChange={updateEndDates} min={startDate.date}></input>
-                    </div>
-                    <div className="specific-time-container">
-                    <strong>Time</strong>
-                        <div className="specific-time-inner-container">
-                            <input type="number" name="endHours" id="endHours" max="0" min="23" onChange={updateEndDates}></input>
-                            <span>h</span>
-                            <input type="number" name="endMinutes" id="endMinutes" max="0" min="59" onChange={updateEndDates}></input>
-                            <span>m</span>
-                            <input type="number" name="endSeconds" id="endSeconds" max="0" min="59" onChange={updateEndDates}></input>
-                            <span>s</span>
+                        <div className="end-time-container time-containers">
+                            <div className="end-date">
+                                <strong>End Time</strong>
+                                <input type="date" name="endDate" id="endDate" onChange={updateEndDates} min={startDate.date}></input>
+                            </div>
+                            <div className="specific-time-container">
+                            <strong>Time</strong>
+                                <div className="specific-time-inner-container">
+                                    <input type="number" name="endHours" id="endHours" max="0" min="23" onChange={updateEndDates}></input>
+                                    <span>h</span>
+                                    <input type="number" name="endMinutes" id="endMinutes" max="0" min="59" onChange={updateEndDates}></input>
+                                    <span>m</span>
+                                    <input type="number" name="endSeconds" id="endSeconds" max="0" min="59" onChange={updateEndDates}></input>
+                                    <span>s</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <button name="submit" onClick={onSubmit}>Submit</button>
+                        <button name="submit" onClick={onSubmit}>Submit</button>
 
-                {errorMessage != "" && (
-                <>
-                    <br/><br/>
-                    <div className="error-message-usercalendar">
-                        {errorMessage}
-                    </div>
-                </>
-                )}
-            </form>
+                        {errorMessage != "" && (
+                        <>
+                            <br/><br/>
+                            <div className="error-message-usercalendar">
+                                {errorMessage}
+                            </div>
+                        </>
+                        )}
+                    </form>
+                </div>
+                <div className="inline-inner-containers">
+                    <form className="details-event">
+                        <strong className="usercalendar-header">Event Details</strong><br/><br/>
+                        <strong>Event Title</strong><br/><br/>
+                        <input type="text" name="eventTitle" onChange={updateDET}></input><br/><br/>
+                        <div className="start-time-container time-containers">
+                            <div className="start-date">
+                                <strong>Start Time</strong>
+                                <input type="date" name="startDateDetail" id="startDateDetail" onChange={updateStartDatesDetail} min={currentDate}></input>
+                            </div>
+                            <div className="specific-time-container">
+                                <strong>Time</strong>
+                                <div className="specific-time-inner-container">
+                                    <input type="number" name="startHoursDetail" id="startHoursDetail" max="0" min="23" onChange={updateStartDatesDetail}></input>
+                                    <span>h</span>
+                                    <input type="number" name="startMinutesDetail" id="startMinutesDetail" max="0" min="59" onChange={updateStartDatesDetail}></input>
+                                    <span>m</span>
+                                    <input type="number" name="startSecondsDetail" id="startSecondsDetail" max="0" min="59" onChange={updateStartDatesDetail}></input>
+                                    <span>s</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="end-time-container time-containers">
+                            <div className="end-date">
+                                <strong>End Time</strong>
+                                <input type="date" name="endDateDetail" id="endDateDetail" onChange={updateEndDatesDetail} min={startDate.date}></input>
+                            </div>
+                            <div className="specific-time-container">
+                            <strong>Time</strong>
+                                <div className="specific-time-inner-container">
+                                    <input type="number" name="endHoursDetail" id="endHoursDetail" max="0" min="23" onChange={updateEndDatesDetail}></input>
+                                    <span>h</span>
+                                    <input type="number" name="endMinutesDetail" id="endMinutesDetail" max="0" min="59" onChange={updateEndDatesDetail}></input>
+                                    <span>m</span>
+                                    <input type="number" name="endSecondsDetail" id="endSecondsDetail" max="0" min="59" onChange={updateEndDatesDetail}></input>
+                                    <span>s</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button name="updateEvent" onClick={onUpdateEvent}>Update</button>
+                        <button name="deleteEvent" onClick={onDeleteEvent}>Delete</button>
+
+                        {errorMessage != "" && (
+                        <>
+                            <br/><br/>
+                            <div className="error-message-usercalendar">
+                                {errorMessageDetail}
+                            </div>
+                        </>
+                        )}
+                    </form>
+                </div>
+            </div>
             
         </div>
     );

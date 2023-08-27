@@ -2,9 +2,16 @@
     --add-event: 400px;
 }
 
-.add-event {
-    font-size: 20px;
+.inline-containers { 
+    display: flex;
+}
+
+.inline-containers .inline-inner-containers {
     margin: 20px;
+}
+
+.add-event, .details-event {
+    font-size: 20px;
     max-width: var(--add-event);
     padding: 75px 50px;
     border: 1px solid var(--text-color);
@@ -45,7 +52,7 @@
     font-size: 18px;
 }
 
-.add-event input {
+.add-event input, .details-event input {
     padding: 10px 0 10px 0px;
     font-size: 16px;
     border: 1px solid var(--text-color);
