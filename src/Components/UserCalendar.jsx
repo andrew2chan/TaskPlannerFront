@@ -43,6 +43,8 @@ const UserCalendar = () => {
         "seconds": 0
     });
 
+    const [selectedEvents, updatedSelectedEvents] = useState({})
+
     const pullEventsFromBackend = () => {
         axios.get(`https://${domain}/api/Activities/userActivity/${user.id}`)
         .then(function(response) {
@@ -51,10 +53,13 @@ const UserCalendar = () => {
             let eventsFromDb = []; //makes a new events array
             for(let i = 0; i < response.data.length; i++) { //go through each even we get back from backend
                 const { id, activityName: title, activityStartTime, activityEndTime, plannedTaskId } = response.data[i]; //destructure
+                let tmpStartTime = new Date(activityStartTime);
+                let tmpEndTime = new Date(activityEndTime);
 
-                eventsFromDb.push({ id, title, start: new Date(activityStartTime), end: new Date(activityEndTime) })
+                eventsFromDb.push({ id, title, start: tmpStartTime, end: tmpEndTime })
             }
-
+            
+            //console.log(response);
             setEvents(eventsFromDb); //sets the events to the ones pulled from backend
         })
         .catch(function(err) {
@@ -84,7 +89,37 @@ const UserCalendar = () => {
     const f = (e) => {
         setBCView("week"); //when you click on something in the month calendar, it goes to the weeks calendar
 
-        console.log(e);
+        let selectedEventStartDate = new Date(e.start);
+
+        let selectedEventStartDateD = [
+            selectedEventStartDate.getFullYear(),
+            ('0' + (selectedEventStartDate.getMonth() + 1)).slice(-2),
+            ('0' + selectedEventStartDate.getDate()).slice(-2),
+        ]
+
+        let selectedEventEndDate = new Date(e.end);
+
+        let selectedEventEndDateD = [
+            selectedEventEndDate.getFullYear(),
+            ('0' + (selectedEventEndDate.getMonth() + 1)).slice(-2),
+            ('0' + selectedEventEndDate.getDate()).slice(-2),
+        ]
+
+        updatedSelectedEvents({
+            "id": e.id,
+            "title": e.title,
+            "startTime": selectedEventStartDateD.join("-"),
+            "startHour": selectedEventStartDate.getHours(),
+            "startMinutes": selectedEventStartDate.getMinutes(),
+            "startSeconds": selectedEventStartDate.getSeconds(),
+            "endTime": selectedEventEndDateD.join("-"),
+            "endHour": selectedEventEndDate.getHours(),
+            "endMinutes": selectedEventEndDate.getMinutes(),
+            "endSeconds": selectedEventEndDate.getSeconds()
+        })
+
+        /*console.log(selectedEventStartDate);
+        console.log(selectedEvents);*/
     }
 
     const updateStartDates = (e) => {
@@ -202,6 +237,8 @@ const UserCalendar = () => {
             ActivityEndTime: finalEndDate
         }
 
+        console.log(postObject);
+
         axios.post(`https://${domain}/api/Activities?userId=${user.id}`, postObject)
         .then(function(response) {
             console.log(response);
@@ -299,20 +336,20 @@ const UserCalendar = () => {
                     <form className="details-event">
                         <strong className="usercalendar-header">Event Details</strong><br/><br/>
                         <strong>Event Title</strong><br/><br/>
-                        <input type="text" name="eventTitle" onChange={updateDET}></input><br/><br/>
+                        <input type="text" name="eventTitle" onChange={updateDET} value={selectedEvents.title}></input><br/><br/>
                         <div className="start-time-container time-containers">
                             <div className="start-date">
                                 <strong>Start Time</strong>
-                                <input type="date" name="startDateDetail" id="startDateDetail" onChange={updateStartDatesDetail} min={currentDate}></input>
+                                <input type="date" name="startDateDetail" id="startDateDetail" onChange={updateStartDatesDetail} min={currentDate} value={selectedEvents.startTime}></input>
                             </div>
                             <div className="specific-time-container">
                                 <strong>Time</strong>
                                 <div className="specific-time-inner-container">
-                                    <input type="number" name="startHoursDetail" id="startHoursDetail" max="0" min="23" onChange={updateStartDatesDetail}></input>
+                                    <input type="number" name="startHoursDetail" id="startHoursDetail" max="0" min="23" onChange={updateStartDatesDetail} value={selectedEvents.startHour}></input>
                                     <span>h</span>
-                                    <input type="number" name="startMinutesDetail" id="startMinutesDetail" max="0" min="59" onChange={updateStartDatesDetail}></input>
+                                    <input type="number" name="startMinutesDetail" id="startMinutesDetail" max="0" min="59" onChange={updateStartDatesDetail} value={selectedEvents.startMinutes}></input>
                                     <span>m</span>
-                                    <input type="number" name="startSecondsDetail" id="startSecondsDetail" max="0" min="59" onChange={updateStartDatesDetail}></input>
+                                    <input type="number" name="startSecondsDetail" id="startSecondsDetail" max="0" min="59" onChange={updateStartDatesDetail} value={selectedEvents.startSeconds}></input>
                                     <span>s</span>
                                 </div>
                             </div>
@@ -320,16 +357,16 @@ const UserCalendar = () => {
                         <div className="end-time-container time-containers">
                             <div className="end-date">
                                 <strong>End Time</strong>
-                                <input type="date" name="endDateDetail" id="endDateDetail" onChange={updateEndDatesDetail} min={startDate.date}></input>
+                                <input type="date" name="endDateDetail" id="endDateDetail" onChange={updateEndDatesDetail} min={startDate.date} value={selectedEvents.endTime}></input>
                             </div>
                             <div className="specific-time-container">
                             <strong>Time</strong>
                                 <div className="specific-time-inner-container">
-                                    <input type="number" name="endHoursDetail" id="endHoursDetail" max="0" min="23" onChange={updateEndDatesDetail}></input>
+                                    <input type="number" name="endHoursDetail" id="endHoursDetail" max="0" min="23" onChange={updateEndDatesDetail} value={selectedEvents.endHour}></input>
                                     <span>h</span>
-                                    <input type="number" name="endMinutesDetail" id="endMinutesDetail" max="0" min="59" onChange={updateEndDatesDetail}></input>
+                                    <input type="number" name="endMinutesDetail" id="endMinutesDetail" max="0" min="59" onChange={updateEndDatesDetail} value={selectedEvents.endMinutes}></input>
                                     <span>m</span>
-                                    <input type="number" name="endSecondsDetail" id="endSecondsDetail" max="0" min="59" onChange={updateEndDatesDetail}></input>
+                                    <input type="number" name="endSecondsDetail" id="endSecondsDetail" max="0" min="59" onChange={updateEndDatesDetail} value={selectedEvents.endSeconds}></input>
                                     <span>s</span>
                                 </div>
                             </div>
