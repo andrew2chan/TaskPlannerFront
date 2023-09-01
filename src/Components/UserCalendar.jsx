@@ -56,10 +56,9 @@ const UserCalendar = () => {
                 let tmpStartTime = new Date(activityStartTime);
                 let tmpEndTime = new Date(activityEndTime);
 
-                eventsFromDb.push({ id, title, start: tmpStartTime, end: tmpEndTime })
+                eventsFromDb.push({ id, title, start: tmpStartTime , end: tmpEndTime })
             }
             
-            //console.log(response);
             setEvents(eventsFromDb); //sets the events to the ones pulled from backend
         })
         .catch(function(err) {
@@ -87,7 +86,7 @@ const UserCalendar = () => {
     const [bcView, setBCView] = useState("month")
 
     const f = (e) => {
-        setBCView("week"); //when you click on something in the month calendar, it goes to the weeks calendar
+        //setBCView("week"); //when you click on something in the month calendar, it goes to the weeks calendar
 
         let selectedEventStartDate = new Date(e.start);
 
@@ -239,6 +238,7 @@ const UserCalendar = () => {
 
         console.log(postObject);
 
+
         axios.post(`https://${domain}/api/Activities?userId=${user.id}`, postObject)
         .then(function(response) {
             console.log(response);
@@ -251,11 +251,11 @@ const UserCalendar = () => {
     }
 
     const onUpdateEvent = (e) => {
-
+        e.preventDefault();
     }
 
     const onDeleteEvent = (e) => {
-
+        e.preventDefault();
     }
 
     const updateET = (e) => {
@@ -276,12 +276,12 @@ const UserCalendar = () => {
                 endAccessor="end"
                 style={{ height: 500 }}
                 onSelectEvent={f}
-                view={bcView}
-                onView={setBCView}
+                //view={bcView}
+                //onView={setBCView}
             />
 
             <div className="inline-containers">
-                <div class="inline-inner-containers">
+                <div className="inline-inner-containers">
                     <form className="add-event">
                         <strong className="usercalendar-header">Add event</strong><br/><br/>
                         <strong>Event Title</strong><br/><br/>

@@ -75,6 +75,7 @@ const Profile = () => {
         axios.delete(`https://${domain}/api/User/${dataFromSelector.id}`)
         .then(function(response) {
             updateErrorMessage("Account has been deleted");
+            localStorage.clear();
             resetReduxState();
         })
         .catch(function(err) {

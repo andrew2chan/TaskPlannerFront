@@ -1,12 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import '../Stylesheets/Navbar.css';
 import { Link } from 'react-router-dom';
 import { updateId, updateUserEmail, updateName, updatePlannedTasksId } from '../Slices/userSlice';
 
 const Navbar = () => {
-    const id = useSelector((state) => state.user.id);
+    const idFromRedux = useSelector((state) => state.user.id);
+    const [id, updateCurrId] = useState(-1);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if(localStorage.getItem("id") != null) {
+            updateCurrId(localStorage.getItem("id"));
+
+            dispatch(updateId(localStorage.getItem("id"))); 
+            dispatch(updateUserEmail(localStorage.getItem("email")));
+            dispatch(updateName(localStorage.getItem("name")));
+            dispatch(updatePlannedTasksId(localStorage.getItem("plannedTasksId")));
+        }
+    },[])
+
+    useEffect(() => {
+        updateCurrId(idFromRedux);
+    },[idFromRedux])
 
     const resetReduxState = () => {
         dispatch(updateId(-1));
@@ -15,7 +31,8 @@ const Navbar = () => {
         dispatch(updatePlannedTasksId(-1));
     }
 
-    const resetState = () => {
+    const resetState = (e) => {
+        localStorage.clear();
         resetReduxState();
     }
 

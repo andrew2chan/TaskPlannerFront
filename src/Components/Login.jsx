@@ -38,6 +38,11 @@ const Login = () => {
 
             const { id, email, name, plannedTasksId } = response.data;
 
+            localStorage.setItem("id", id);
+            localStorage.setItem("email", email);
+            localStorage.setItem("name", name);
+            localStorage.setItem("plannedTasksId", plannedTasksId);
+
             /* dispatch to update store with all the new vars we need for a user */
             dispatch(updateId(id)); 
             dispatch(updateUserEmail(email));
