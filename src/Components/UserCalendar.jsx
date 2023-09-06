@@ -31,13 +31,13 @@ const UserCalendar = () => {
     const [detailEventTitle, updateDetailEventTitle] = useState("");
     const [errorMessageDetail, updateErrorMessageDetail] = useState("");
     const [startDateDetail, updateStartDateDetail] = useState({
-        "date": new Date(),
+        "date": null,
         "hours": 0,
         "minutes": 0,
         "seconds": 0
     });
     const [endDateDetail, updateEndDateDetail] = useState({
-        "date": new Date(),
+        "date": null,
         "hours": 0,
         "minutes": 0,
         "seconds": 0
@@ -83,7 +83,7 @@ const UserCalendar = () => {
         updateEndDate({ ...endDate, date: combinedDate })
     },[])
 
-    const [bcView, setBCView] = useState("month")
+    //const [bcView, setBCView] = useState("month")
 
     const f = (e) => {
         //setBCView("week"); //when you click on something in the month calendar, it goes to the weeks calendar
@@ -107,14 +107,22 @@ const UserCalendar = () => {
         updatedSelectedEvents({
             "id": e.id,
             "title": e.title,
-            "startTime": selectedEventStartDateD.join("-"),
-            "startHour": selectedEventStartDate.getHours(),
-            "startMinutes": selectedEventStartDate.getMinutes(),
-            "startSeconds": selectedEventStartDate.getSeconds(),
-            "endTime": selectedEventEndDateD.join("-"),
-            "endHour": selectedEventEndDate.getHours(),
-            "endMinutes": selectedEventEndDate.getMinutes(),
-            "endSeconds": selectedEventEndDate.getSeconds()
+        })
+
+        updateDetailEventTitle(e.title);
+
+        updateStartDateDetail({
+            "date": selectedEventStartDateD.join("-"),
+            "hours": selectedEventStartDate.getHours(),
+            "minutes": selectedEventStartDate.getMinutes(),
+            "seconds": selectedEventStartDate.getSeconds()
+        })
+
+        updateEndDateDetail({
+            "date": selectedEventEndDateD.join("-"),
+            "hours": selectedEventEndDate.getHours(),
+            "minutes": selectedEventEndDate.getMinutes(),
+            "seconds": selectedEventEndDate.getSeconds()
         })
 
         /*console.log(selectedEventStartDate);
@@ -162,17 +170,17 @@ const UserCalendar = () => {
 
     const updateStartDatesDetail = (e) => {
         switch(e.target.id) {
-            case 'endDate':
-                updateStartDateDetail({ ...endDate, date: e.target.value || currentDate })
+            case 'startDateDetail':
+                updateStartDateDetail({ ...startDateDetail, date: e.target.value || currentDate })
                 break;
-            case 'endHours':
-                updateStartDateDetail({ ...endDate, hours: e.target.value || 0 })
+            case 'startHoursDetail':
+                updateStartDateDetail({ ...startDateDetail, hours: e.target.value || 0 })
                 break;
-            case 'endMinutes':
-                updateStartDateDetail({ ...endDate, minutes: e.target.value || 0 })
+            case 'startMinutesDetail':
+                updateStartDateDetail({ ...startDateDetail, minutes: e.target.value || 0 })
                 break;
-            case 'endSeconds':
-                updateStartDateDetail({ ...endDate, seconds: e.target.value || 0 })
+            case 'startSecondsDetail':
+                updateStartDateDetail({ ...startDateDetail, seconds: e.target.value || 0 })
                 break;
             default:
                 break;
@@ -181,17 +189,17 @@ const UserCalendar = () => {
 
     const updateEndDatesDetail = (e) => {
         switch(e.target.id) {
-            case 'endDate':
-                updateStartDateDetail({ ...endDate, date: e.target.value || currentDate })
+            case 'endDateDetail':
+                updateEndDateDetail({ ...endDateDetail, date: e.target.value || currentDate })
                 break;
-            case 'endHours':
-                updateStartDateDetail({ ...endDate, hours: e.target.value || 0 })
+            case 'endHoursDetail':
+                updateEndDateDetail({ ...endDateDetail, hours: e.target.value || 0 })
                 break;
-            case 'endMinutes':
-                updateStartDateDetail({ ...endDate, minutes: e.target.value || 0 })
+            case 'endMinutesDetail':
+                updateEndDateDetail({ ...endDateDetail, minutes: e.target.value || 0 })
                 break;
-            case 'endSeconds':
-                updateStartDateDetail({ ...endDate, seconds: e.target.value || 0 })
+            case 'endSecondsDetail':
+                updateEndDateDetail({ ...endDateDetail, seconds: e.target.value || 0 })
                 break;
             default:
                 break;
@@ -236,7 +244,7 @@ const UserCalendar = () => {
             ActivityEndTime: finalEndDate
         }
 
-        console.log(postObject);
+        //console.log(postObject);
 
 
         axios.post(`https://${domain}/api/Activities?userId=${user.id}`, postObject)
@@ -252,10 +260,96 @@ const UserCalendar = () => {
 
     const onUpdateEvent = (e) => {
         e.preventDefault();
+
+        if(startDateDetail.hours > 23 || endDateDetail.hours > 23 || startDateDetail.hours < 0 || endDateDetail.hours < 0) {
+            updateErrorMessageDetail("Please enter between 0-23 in hours");
+            return;
+        }
+
+        if(startDateDetail.minutes > 59 || endDateDetail.minutes > 59 || startDateDetail.minutes < 0 || endDateDetail.minutes < 0) {
+            updateErrorMessageDetail("Please enter between 0-59 in minutes");
+            return;
+        }
+
+        if(startDateDetail.seconds > 59 || endDateDetail.seconds > 59 || startDateDetail.seconds < 0 || endDateDetail.seconds < 0) {
+            updateErrorMessageDetail("Please enter between 0-59 in seconds");
+            return;
+        }
+
+        let selectedEventStartDate = new Date(startDateDetail.date);
+
+        let selectedEventStartDateD = [
+            selectedEventStartDate.getFullYear(),
+            ('0' + (selectedEventStartDate.getMonth() + 1)).slice(-2),
+            ('0' + selectedEventStartDate.getDate()).slice(-2),
+        ]
+
+        let selectedEventEndDate = new Date(endDateDetail.date);
+
+        let selectedEventEndDateD = [
+            selectedEventEndDate.getFullYear(),
+            ('0' + (selectedEventEndDate.getMonth() + 1)).slice(-2),
+            ('0' + selectedEventEndDate.getDate()).slice(-2),
+        ]
+
+        let finalStartDate = new Date(selectedEventStartDateD.join("-") + " " + startDateDetail.hours + ":" + startDateDetail.minutes + ":" + startDateDetail.seconds);
+        let finalEndDate = new Date(selectedEventEndDateD.join("-") + " " + endDateDetail.hours + ":" + endDateDetail.minutes + ":" + endDateDetail.seconds);
+
+        if(finalEndDate < finalStartDate) {
+            updateErrorMessageDetail("Please make sure that the end date is on the same day or after the start date");
+            return;
+        }
+
+        if(detailEventTitle == 0) {
+            updateErrorMessageDetail("Please make sure to enter an event title");
+            return;
+        }
+
+        let putObj = {
+            "Id": selectedEvents.id,
+            "ActivityName": detailEventTitle,
+            "ActivityStartTime": finalStartDate,
+            "ActivityEndTime": finalEndDate,
+            "PlannedTasksId": user.plannedUserId
+        }
+
+        console.log(putObj);
+
+        axios.put(`https://${domain}/api/Activities`, putObj)
+        .then(function(response) {
+            console.log(response);
+            updateErrorMessageDetail("");
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
     }
 
     const onDeleteEvent = (e) => {
         e.preventDefault();
+
+        axios.delete(`https://${domain}/api/Activities/${selectedEvents.id}`)
+        .then(function(response) {
+            console.log(response);
+            pullEventsFromBackend();
+            updatedSelectedEvents({});
+            updateStartDateDetail({
+                "date": null,
+                "hours": 0,
+                "minutes": 0,
+                "seconds": 0
+            });
+
+            updateEndDateDetail({
+                "date": null,
+                "hours": 0,
+                "minutes": 0,
+                "seconds": 0
+            })
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
     }
 
     const updateET = (e) => {
@@ -332,58 +426,60 @@ const UserCalendar = () => {
                         )}
                     </form>
                 </div>
-                <div className="inline-inner-containers">
-                    <form className="details-event">
-                        <strong className="usercalendar-header">Event Details</strong><br/><br/>
-                        <strong>Event Title</strong><br/><br/>
-                        <input type="text" name="eventTitle" onChange={updateDET} value={selectedEvents.title}></input><br/><br/>
-                        <div className="start-time-container time-containers">
-                            <div className="start-date">
-                                <strong>Start Time</strong>
-                                <input type="date" name="startDateDetail" id="startDateDetail" onChange={updateStartDatesDetail} min={currentDate} value={selectedEvents.startTime}></input>
+                { startDateDetail.date != null && 
+                    <div className="inline-inner-containers">
+                        <form className="details-event">
+                            <strong className="usercalendar-header">Event Details</strong><br/><br/>
+                            <strong>Event Title</strong><br/><br/>
+                            <input type="text" name="eventTitle" onChange={updateDET} value={detailEventTitle}></input><br/><br/>
+                            <div className="start-time-container time-containers">
+                                <div className="start-date">
+                                    <strong>Start Time</strong>
+                                    <input type="date" name="startDateDetail" id="startDateDetail" onChange={updateStartDatesDetail} min={currentDate} value={startDateDetail.date}></input>
+                                </div>
+                                <div className="specific-time-container">
+                                    <strong>Time</strong>
+                                    <div className="specific-time-inner-container">
+                                        <input type="number" name="startHoursDetail" id="startHoursDetail" max="0" min="23" onChange={updateStartDatesDetail} value={startDateDetail.hours}></input>
+                                        <span>h</span>
+                                        <input type="number" name="startMinutesDetail" id="startMinutesDetail" max="0" min="59" onChange={updateStartDatesDetail} value={startDateDetail.minutes}></input>
+                                        <span>m</span>
+                                        <input type="number" name="startSecondsDetail" id="startSecondsDetail" max="0" min="59" onChange={updateStartDatesDetail} value={startDateDetail.seconds}></input>
+                                        <span>s</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="specific-time-container">
+                            <div className="end-time-container time-containers">
+                                <div className="end-date">
+                                    <strong>End Time</strong>
+                                    <input type="date" name="endDateDetail" id="endDateDetail" onChange={updateEndDatesDetail} min={startDate.date} value={endDateDetail.date}></input>
+                                </div>
+                                <div className="specific-time-container">
                                 <strong>Time</strong>
-                                <div className="specific-time-inner-container">
-                                    <input type="number" name="startHoursDetail" id="startHoursDetail" max="0" min="23" onChange={updateStartDatesDetail} value={selectedEvents.startHour}></input>
-                                    <span>h</span>
-                                    <input type="number" name="startMinutesDetail" id="startMinutesDetail" max="0" min="59" onChange={updateStartDatesDetail} value={selectedEvents.startMinutes}></input>
-                                    <span>m</span>
-                                    <input type="number" name="startSecondsDetail" id="startSecondsDetail" max="0" min="59" onChange={updateStartDatesDetail} value={selectedEvents.startSeconds}></input>
-                                    <span>s</span>
+                                    <div className="specific-time-inner-container">
+                                        <input type="number" name="endHoursDetail" id="endHoursDetail" max="0" min="23" onChange={updateEndDatesDetail} value={endDateDetail.hours}></input>
+                                        <span>h</span>
+                                        <input type="number" name="endMinutesDetail" id="endMinutesDetail" max="0" min="59" onChange={updateEndDatesDetail} value={endDateDetail.minutes}></input>
+                                        <span>m</span>
+                                        <input type="number" name="endSecondsDetail" id="endSecondsDetail" max="0" min="59" onChange={updateEndDatesDetail} value={endDateDetail.seconds}></input>
+                                        <span>s</span>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="end-time-container time-containers">
-                            <div className="end-date">
-                                <strong>End Time</strong>
-                                <input type="date" name="endDateDetail" id="endDateDetail" onChange={updateEndDatesDetail} min={startDate.date} value={selectedEvents.endTime}></input>
-                            </div>
-                            <div className="specific-time-container">
-                            <strong>Time</strong>
-                                <div className="specific-time-inner-container">
-                                    <input type="number" name="endHoursDetail" id="endHoursDetail" max="0" min="23" onChange={updateEndDatesDetail} value={selectedEvents.endHour}></input>
-                                    <span>h</span>
-                                    <input type="number" name="endMinutesDetail" id="endMinutesDetail" max="0" min="59" onChange={updateEndDatesDetail} value={selectedEvents.endMinutes}></input>
-                                    <span>m</span>
-                                    <input type="number" name="endSecondsDetail" id="endSecondsDetail" max="0" min="59" onChange={updateEndDatesDetail} value={selectedEvents.endSeconds}></input>
-                                    <span>s</span>
-                                </div>
-                            </div>
-                        </div>
-                        <button name="updateEvent" onClick={onUpdateEvent}>Update</button>
-                        <button name="deleteEvent" onClick={onDeleteEvent}>Delete</button>
+                            <button name="updateEvent" onClick={onUpdateEvent}>Update</button>
+                            <button name="deleteEvent" onClick={onDeleteEvent}>Delete</button>
 
-                        {errorMessage != "" && (
-                        <>
-                            <br/><br/>
-                            <div className="error-message-usercalendar">
-                                {errorMessageDetail}
-                            </div>
-                        </>
-                        )}
-                    </form>
-                </div>
+                            {errorMessageDetail != "" && (
+                            <>
+                                <br/><br/>
+                                <div className="error-message-usercalendar">
+                                    {errorMessageDetail}
+                                </div>
+                            </>
+                            )}
+                        </form>
+                    </div>
+                }
             </div>
             
         </div>
