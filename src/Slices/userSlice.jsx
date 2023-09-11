@@ -6,7 +6,8 @@ export const userSlice = createSlice({
         id: -1,
         email: "",
         name: "",
-        plannedUserId: -1
+        plannedUserId: -1,
+        token: ""
     },
     reducers: {
         updateId: (state, action) => {
@@ -20,10 +21,13 @@ export const userSlice = createSlice({
         },
         updatePlannedTasksId: (state, action) => {
             state.plannedUserId = action.payload
+        },
+        updateToken: (state, action) => {
+            state.token = action.payload;
         }
     }
 });
 
-export const { updateId, updateUserEmail, updateName, updatePlannedTasksId } = userSlice.actions;
+export const { updateId, updateUserEmail, updateName, updatePlannedTasksId, updateToken } = userSlice.actions;
 
 export default userSlice.reducer;

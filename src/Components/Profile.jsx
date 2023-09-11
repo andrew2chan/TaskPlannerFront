@@ -3,7 +3,7 @@ import '../Stylesheets/Profile.css';
 import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { updateId, updateUserEmail, updatePlannedTasksId, updateName } from '../Slices/userSlice';
+import { updateId, updateUserEmail, updatePlannedTasksId, updateName, updateToken } from '../Slices/userSlice';
 
 const Profile = () => {
     const dataFromSelector = useSelector((state) => state.user);
@@ -48,7 +48,11 @@ const Profile = () => {
             return;
         }
 
-        axios.put(`https://${domain}/api/User/${dataFromSelector.id}`, clientInputs)
+        let config = {
+            headers: { Authorization: `Bearer ${dataFromSelector.token}` }
+        }
+
+        axios.put(`https://${domain}/api/User/${dataFromSelector.id}`, clientInputs, config)
         .then(function(response) {
             updateErrorMessage("Records have been updated!");
 
@@ -69,10 +73,15 @@ const Profile = () => {
         dispatch(updateUserEmail(""));
         dispatch(updateName(""));
         dispatch(updatePlannedTasksId(-1));
+        dispatch(updateToken(""))
     }
 
     const deleteAccount = (e) => {
-        axios.delete(`https://${domain}/api/User/${dataFromSelector.id}`)
+        let config = {
+            headers: { Authorization: `Bearer ${dataFromSelector.token}` }
+        }
+
+        axios.delete(`https://${domain}/api/User/${dataFromSelector.id}`, config)
         .then(function(response) {
             updateErrorMessage("Account has been deleted");
             localStorage.clear();

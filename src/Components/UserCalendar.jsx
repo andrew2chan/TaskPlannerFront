@@ -46,7 +46,11 @@ const UserCalendar = () => {
     const [selectedEvents, updatedSelectedEvents] = useState({})
 
     const pullEventsFromBackend = () => {
-        axios.get(`https://${domain}/api/Activities/userActivity/${user.id}`)
+        let config = {
+            headers: { Authorization: `Bearer ${user.token}` }
+        }
+
+        axios.get(`https://${domain}/api/Activities/userActivity/${user.id}`, config)
         .then(function(response) {
             //console.log(response);
             
@@ -246,8 +250,11 @@ const UserCalendar = () => {
 
         //console.log(postObject);
 
+        let config = {
+            headers: { Authorization: `Bearer ${user.token}` }
+        }
 
-        axios.post(`https://${domain}/api/Activities?userId=${user.id}`, postObject)
+        axios.post(`https://${domain}/api/Activities?userId=${user.id}`, postObject, config)
         .then(function(response) {
             console.log(response);
             updateErrorMessage("Successfully added event!");
@@ -281,7 +288,7 @@ const UserCalendar = () => {
         let selectedEventStartDateD = [
             selectedEventStartDate.getFullYear(),
             ('0' + (selectedEventStartDate.getMonth() + 1)).slice(-2),
-            ('0' + selectedEventStartDate.getDate()).slice(-2),
+            ('0' + selectedEventStartDate.getUTCDate()).slice(-2),
         ]
 
         let selectedEventEndDate = new Date(endDateDetail.date);
@@ -289,7 +296,7 @@ const UserCalendar = () => {
         let selectedEventEndDateD = [
             selectedEventEndDate.getFullYear(),
             ('0' + (selectedEventEndDate.getMonth() + 1)).slice(-2),
-            ('0' + selectedEventEndDate.getDate()).slice(-2),
+            ('0' + selectedEventEndDate.getUTCDate()).slice(-2),
         ]
 
         let finalStartDate = new Date(selectedEventStartDateD.join("-") + " " + startDateDetail.hours + ":" + startDateDetail.minutes + ":" + startDateDetail.seconds);
@@ -313,12 +320,16 @@ const UserCalendar = () => {
             "PlannedTasksId": user.plannedUserId
         }
 
-        console.log(putObj);
+        let config = {
+            headers: { Authorization: `Bearer ${user.token}` }
+        }
 
-        axios.put(`https://${domain}/api/Activities`, putObj)
+        console.log(putObj)
+
+        axios.put(`https://${domain}/api/Activities`, putObj, config)
         .then(function(response) {
             console.log(response);
-            updateErrorMessageDetail("");
+            updateErrorMessageDetail("Updated successfully!");
         })
         .catch(function(err) {
             console.log(err);
@@ -328,7 +339,11 @@ const UserCalendar = () => {
     const onDeleteEvent = (e) => {
         e.preventDefault();
 
-        axios.delete(`https://${domain}/api/Activities/${selectedEvents.id}`)
+        let config = {
+            headers: { Authorization: `Bearer ${user.token}` }
+        }
+
+        axios.delete(`https://${domain}/api/Activities/${selectedEvents.id}`, config)
         .then(function(response) {
             console.log(response);
             pullEventsFromBackend();
@@ -346,6 +361,8 @@ const UserCalendar = () => {
                 "minutes": 0,
                 "seconds": 0
             })
+
+            updateErrorMessageDetail("");
         })
         .catch(function(err) {
             console.log(err);

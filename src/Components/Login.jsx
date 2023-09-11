@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateId, updateUserEmail, updateName, updatePlannedTasksId } from '../Slices/userSlice';
+import { updateId, updateUserEmail, updateName, updatePlannedTasksId, updateToken } from '../Slices/userSlice';
 import '../Stylesheets/Login.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -36,18 +36,20 @@ const Login = () => {
         .then(function(response) {
             console.log(response);
 
-            const { id, email, name, plannedTasksId } = response.data;
+            const { id, email, name, plannedTasksId, token } = response.data;
 
             localStorage.setItem("id", id);
             localStorage.setItem("email", email);
             localStorage.setItem("name", name);
             localStorage.setItem("plannedTasksId", plannedTasksId);
+            localStorage.setItem("token", token)
 
             /* dispatch to update store with all the new vars we need for a user */
             dispatch(updateId(id)); 
             dispatch(updateUserEmail(email));
             dispatch(updateName(name));
             dispatch(updatePlannedTasksId(plannedTasksId));
+            dispatch(updateToken(token));
 
             updateErrorMessage("Login successful!");
             navigate('/usercalendar'); //redirect to the calendar

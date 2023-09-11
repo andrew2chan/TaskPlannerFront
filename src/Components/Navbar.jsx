@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import '../Stylesheets/Navbar.css';
 import { Link } from 'react-router-dom';
-import { updateId, updateUserEmail, updateName, updatePlannedTasksId } from '../Slices/userSlice';
+import { updateId, updateUserEmail, updateName, updatePlannedTasksId, updateToken } from '../Slices/userSlice';
 
 const Navbar = () => {
     const idFromRedux = useSelector((state) => state.user.id);
@@ -17,6 +17,7 @@ const Navbar = () => {
             dispatch(updateUserEmail(localStorage.getItem("email")));
             dispatch(updateName(localStorage.getItem("name")));
             dispatch(updatePlannedTasksId(localStorage.getItem("plannedTasksId")));
+            dispatch(updateToken(localStorage.getItem("token")));
         }
     },[])
 
@@ -29,6 +30,7 @@ const Navbar = () => {
         dispatch(updateUserEmail(""));
         dispatch(updateName(""));
         dispatch(updatePlannedTasksId(-1));
+        dispatch(updateToken(""));
     }
 
     const resetState = (e) => {
