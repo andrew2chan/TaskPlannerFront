@@ -129,6 +129,9 @@ const UserCalendar = () => {
             "seconds": selectedEventEndDate.getSeconds()
         })
 
+        updateErrorMessage("");
+        updateErrorMessageDetail("");
+
         /*console.log(selectedEventStartDate);
         console.log(selectedEvents);*/
     }
@@ -329,6 +332,7 @@ const UserCalendar = () => {
         axios.put(`https://${domain}/api/Activities`, putObj, config)
         .then(function(response) {
             console.log(response);
+            pullEventsFromBackend(); //pulls new data from db to rerender page
             updateErrorMessageDetail("Updated successfully!");
         })
         .catch(function(err) {
