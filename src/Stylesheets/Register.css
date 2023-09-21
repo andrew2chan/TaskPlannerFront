@@ -16,6 +16,7 @@
     padding: 75px 50px;
     border: 1px solid var(--text-color);
     border-radius: 25px;
+    word-wrap: break-word;
 }
 
 .registration-form input {
@@ -32,6 +33,7 @@
 
 .registration-form label {
     margin: 30px 0;
+    word-wrap: break-word;
 }
 
 .registration-form button {
@@ -52,4 +54,23 @@
 
 .error-message-registration {
     max-width: var(--registration-box);
+}
+
+@media screen and (max-width: 900px) {
+    .registration-form {
+        border: 0;
+        padding: 0;
+        min-width: 0;
+    }
+
+    .registration-form-container {
+        font-size: 16px;
+    }
+
+    .registration-form button {
+        margin-top: 30px;
+        padding: 5px;
+        font-size: 16px;
+        word-wrap: break-word;
+    }
 }

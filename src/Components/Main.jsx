@@ -1,10 +1,13 @@
 import React from 'react';
+import '../Stylesheets/Main.css';
 
 const Main = () => {
     return(
-        <>
-            <h1>This is main</h1>
-        </>
+        <div className="main-body">
+            <div className="main-body-inner">
+                <h1>This is a simple site that lets you add events to a calendar. That's all. Huzzah!</h1>
+            </div>
+        </div>
     )
 }
 

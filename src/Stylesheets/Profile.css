@@ -73,3 +73,26 @@
     color: red;
     box-shadow: 0 0 10px 2px red;
 }
+
+@media screen and (max-width: 900px) {
+    .profile-form {
+        border: 0;
+        padding: 0;
+        min-width: 0;
+    }
+
+    .profile-form-container {
+        font-size: 16px;
+    }
+
+    .profile-form button {
+        margin-top: 30px;
+        padding: 5px;
+        font-size: 16px;
+        word-wrap: break-word;
+    }
+
+    .profile-form a.redirect-buttons {
+        min-width: 0;
+    }
+}

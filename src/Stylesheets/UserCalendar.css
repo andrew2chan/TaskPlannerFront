@@ -31,6 +31,7 @@
 .start-date, .specific-time-container, .end-date {
     display: flex;
     flex-direction: column;
+    max-width: 100%;
 }
 
 .specific-time-inner-container {
@@ -61,10 +62,12 @@
 
 .add-event input[type="text"], .add-event input[type="number"], .details-event input[type="text"], .details-event input[type="number"] {
     padding-left: 5px;
+    max-width: 100%;
 }
 
 .time-containers {
     margin: 10px 0;
+    display: flex;
 }
 
 .add-event button:hover, .details-event button:hover {
@@ -72,4 +75,41 @@
     border: 3px solid orange;
     color: orange;
     box-shadow: 0 0 10px 2px orange;
+}
+
+@media screen and (max-width: 900px) {
+    .inline-containers { 
+        flex-direction: column;
+    }
+    
+    .time-containers {
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .start-time-container, .end-time-container {
+        align-items: flex-start;
+    }
+
+    .specific-time-container {
+        padding: 0;
+    }
+
+    .inline-containers .inline-inner-containers {
+        margin: 0;
+    }
+
+    .add-event, .details-event {
+        padding: 5px 5px;
+        border-radius: 0;
+        border: 0;
+    }
+
+    .specific-time-inner-container {
+        flex-direction: column;
+    }
+
+    .inline-inner-containers:last-child {
+        border-top: 1px solid black;
+    }
 }
