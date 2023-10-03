@@ -4,6 +4,7 @@ import { updateId, updateUserEmail, updateName, updatePlannedTasksId, updateToke
 import '../Stylesheets/Login.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { IsValidEmail } from '../Utilities/HelperFunctions';
 
 const Login = () => {
     let [clientInputs, updateClientInputs] = useState({
@@ -24,10 +25,8 @@ const Login = () => {
     }
 
     const onSubmitStop = (e) => {
-        let reg = /^[A-Z0-9+_.-]+@[A-Z0-9-]+[.][A-Z]+$/ig;
-        let validEmail = reg.test(clientInputs.Email);
 
-        if(!validEmail) { //test to make sure that it fits a valid email format
+        if(!IsValidEmail(clientInputs.Email)) { //test to make sure that it fits a valid email format
             updateErrorMessage("Please make sure all fields are answered and valid.");
             return;
         }

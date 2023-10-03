@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import '../Stylesheets/Register.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { IsValidEmail } from '../Utilities/HelperFunctions';
 
 const Register = () => {
     const [clientInputs, updateClientInputs] = useState({
@@ -27,10 +28,7 @@ const Register = () => {
     }
 
     const onSubmitStop = (e) => {
-        let reg = /^[A-Z0-9+_.-]+@[A-Z0-9-]+[.][A-Z]+$/ig;
-        let validEmail = reg.test(clientInputs.Email);
-
-        if(!validEmail) {
+        if(!IsValidEmail(clientInputs.Email)) {
             updateErrorMessage("Please make sure all fields are answered and valid.");
             return;
         }

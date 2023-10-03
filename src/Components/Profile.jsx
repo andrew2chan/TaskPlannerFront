@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { updateId, updateUserEmail, updatePlannedTasksId, updateName, updateToken } from '../Slices/userSlice';
+import { IsValidEmail } from '../Utilities/HelperFunctions';
 
 const Profile = () => {
     const dataFromSelector = useSelector((state) => state.user);
@@ -40,10 +41,8 @@ const Profile = () => {
 
     const onSubmitStop = (e) => {
         e.preventDefault();
-        let reg = /^[A-Z0-9+_.-]+@[A-Z0-9-]+[.][A-Z]+$/ig;
-        let validEmail = reg.test(clientInputs.Email);
 
-        if(!validEmail) {
+        if(!IsValidEmail(clientInputs.Email)) {
             updateErrorMessage("Please make sure all fields are answered and valid.");
             return;
         }

@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import axios from 'axios';
 import '../Stylesheets/UserCalendar.css';
+import { CreateDateFormatArray } from '../Utilities/HelperFunctions';
 
 const localizer = dayjsLocalizer(dayjs);
 
@@ -52,7 +53,7 @@ const UserCalendar = () => {
 
         axios.get(`https://${domain}/api/Activities/userActivity/${user.id}`, config)
         .then(function(response) {
-            //console.log(response);
+            console.log(response);
             
             let eventsFromDb = []; //makes a new events array
             for(let i = 0; i < response.data.length; i++) { //go through each even we get back from backend
@@ -75,11 +76,7 @@ const UserCalendar = () => {
 
     useEffect(function() {
         let currDate = new Date();
-        let d = [
-            currDate.getFullYear(),
-            ('0' + (currDate.getMonth() + 1)).slice(-2),
-            ('0' + currDate.getDate()).slice(-2),
-        ]
+        let d = CreateDateFormatArray(currDate);
         let combinedDate = d.join("-");
         updateCurrentDate(combinedDate);
 
@@ -87,26 +84,18 @@ const UserCalendar = () => {
         updateEndDate({ ...endDate, date: combinedDate })
     },[])
 
-    //const [bcView, setBCView] = useState("month")
-
     const f = (e) => {
         //setBCView("week"); //when you click on something in the month calendar, it goes to the weeks calendar
 
         let selectedEventStartDate = new Date(e.start);
 
-        let selectedEventStartDateD = [
-            selectedEventStartDate.getFullYear(),
-            ('0' + (selectedEventStartDate.getMonth() + 1)).slice(-2),
-            ('0' + selectedEventStartDate.getDate()).slice(-2),
-        ]
+        let selectedEventStartDateD = CreateDateFormatArray(selectedEventStartDate);
 
         let selectedEventEndDate = new Date(e.end);
 
-        let selectedEventEndDateD = [
-            selectedEventEndDate.getFullYear(),
-            ('0' + (selectedEventEndDate.getMonth() + 1)).slice(-2),
-            ('0' + selectedEventEndDate.getDate()).slice(-2),
-        ]
+        let selectedEventEndDateD = CreateDateFormatArray(selectedEventEndDate);
+
+        console.log(selectedEventStartDateD);
 
         updatedSelectedEvents({
             "id": e.id,
@@ -132,8 +121,8 @@ const UserCalendar = () => {
         updateErrorMessage("");
         updateErrorMessageDetail("");
 
-        /*console.log(selectedEventStartDate);
-        console.log(selectedEvents);*/
+        console.log(selectedEventStartDate);
+        //console.log(selectedEvents);
     }
 
     const updateStartDates = (e) => {
@@ -247,11 +236,11 @@ const UserCalendar = () => {
         //POST TO BACKEND
         let postObject = {
             ActivityName: eventTitle,
-            ActivityStartTime: finalStartDate,
-            ActivityEndTime: finalEndDate
+            ActivityStartTime: finalStartDate.toISOString(),
+            ActivityEndTime: finalEndDate.toISOString()
         }
 
-        //console.log(postObject);
+        console.log(postObject);
 
         let config = {
             headers: { Authorization: `Bearer ${user.token}` }
@@ -288,22 +277,17 @@ const UserCalendar = () => {
 
         let selectedEventStartDate = new Date(startDateDetail.date);
 
-        let selectedEventStartDateD = [
-            selectedEventStartDate.getFullYear(),
-            ('0' + (selectedEventStartDate.getMonth() + 1)).slice(-2),
-            ('0' + selectedEventStartDate.getUTCDate()).slice(-2),
-        ]
+        let selectedEventStartDateD = CreateDateFormatArray(selectedEventStartDate);
 
         let selectedEventEndDate = new Date(endDateDetail.date);
 
-        let selectedEventEndDateD = [
-            selectedEventEndDate.getFullYear(),
-            ('0' + (selectedEventEndDate.getMonth() + 1)).slice(-2),
-            ('0' + selectedEventEndDate.getUTCDate()).slice(-2),
-        ]
+        let selectedEventEndDateD = CreateDateFormatArray(selectedEventEndDate);
 
         let finalStartDate = new Date(selectedEventStartDateD.join("-") + " " + startDateDetail.hours + ":" + startDateDetail.minutes + ":" + startDateDetail.seconds);
         let finalEndDate = new Date(selectedEventEndDateD.join("-") + " " + endDateDetail.hours + ":" + endDateDetail.minutes + ":" + endDateDetail.seconds);
+
+        finalStartDate.setDate(finalStartDate.getDate() + 1);
+        finalEndDate.setDate(finalEndDate.getDate() + 1);
 
         if(finalEndDate < finalStartDate) {
             updateErrorMessageDetail("Please make sure that the end date is on the same day or after the start date");
@@ -318,8 +302,8 @@ const UserCalendar = () => {
         let putObj = {
             "Id": selectedEvents.id,
             "ActivityName": detailEventTitle,
-            "ActivityStartTime": finalStartDate,
-            "ActivityEndTime": finalEndDate,
+            "ActivityStartTime": finalStartDate.toISOString(),
+            "ActivityEndTime": finalEndDate.toISOString(),
             "PlannedTasksId": user.plannedUserId
         }
 
@@ -473,7 +457,7 @@ const UserCalendar = () => {
                             <div className="end-time-container time-containers">
                                 <div className="end-date">
                                     <strong>End Time</strong>
-                                    <input type="date" name="endDateDetail" id="endDateDetail" onChange={updateEndDatesDetail} min={startDate.date} value={endDateDetail.date}></input>
+                                    <input type="date" name="endDateDetail" id="endDateDetail" onChange={updateEndDatesDetail} min={startDateDetail.date} value={endDateDetail.date}></input>
                                 </div>
                                 <div className="specific-time-container">
                                 <strong>Time</strong>
