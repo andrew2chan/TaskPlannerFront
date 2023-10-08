@@ -16,6 +16,7 @@ const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    // input handling
     const updateEmail = (e) => {
         updateClientInputs({ ...clientInputs, Email: e.target.value});
     }
@@ -24,6 +25,7 @@ const Login = () => {
         updateClientInputs({ ...clientInputs, Password: e.target.value});
     }
 
+    // on submit button click
     const onSubmitStop = (e) => {
 
         if(!IsValidEmail(clientInputs.Email)) { //test to make sure that it fits a valid email format

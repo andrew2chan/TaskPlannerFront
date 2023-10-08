@@ -27,6 +27,7 @@ const Profile = () => {
     const domain = useSelector((state) => state.domain.value);
     const [errorMessage, updateErrorMessage] = useState("");
 
+    // input handling
     const updateInputName = (e) => {
         updateClientInputs({...clientInputs, "Name": e.target.value})
     }
@@ -39,6 +40,7 @@ const Profile = () => {
         updateClientInputs({...clientInputs, "Password": e.target.value})
     }
 
+    // on update button click
     const onSubmitStop = (e) => {
         e.preventDefault();
 
@@ -67,6 +69,7 @@ const Profile = () => {
         })
     }
 
+    // reset the state of the redux
     const resetReduxState = () => {
         dispatch(updateId(-1));
         dispatch(updateUserEmail(""));
@@ -75,6 +78,7 @@ const Profile = () => {
         dispatch(updateToken(""))
     }
 
+    // delete the account based on id
     const deleteAccount = (e) => {
         let config = {
             headers: { Authorization: `Bearer ${dataFromSelector.token}` }

@@ -15,6 +15,7 @@ const Register = () => {
     const [errorMessage, updateErrorMessage] = useState("");
     const navigate = useNavigate();
 
+    // input handling
     const updateName = (e) => {
         updateClientInputs({...clientInputs, "Name": e.target.value})
     }
@@ -27,6 +28,7 @@ const Register = () => {
         updateClientInputs({...clientInputs, "Password": e.target.value})
     }
 
+    // on register submit
     const onSubmitStop = (e) => {
         if(!IsValidEmail(clientInputs.Email)) {
             updateErrorMessage("Please make sure all fields are answered and valid.");

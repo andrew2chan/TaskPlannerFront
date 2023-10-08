@@ -56,12 +56,22 @@ const UserCalendar = () => {
             console.log(response);
             
             let eventsFromDb = []; //makes a new events array
-            for(let i = 0; i < response.data.length; i++) { //go through each even we get back from backend
+            for(let i = 0; i < response.data.length; i++) { //go through each event we get back from backend
                 const { id, activityName: title, activityStartTime, activityEndTime, plannedTaskId } = response.data[i]; //destructure
                 let tmpStartTime = new Date(activityStartTime);
                 let tmpEndTime = new Date(activityEndTime);
 
-                eventsFromDb.push({ id, title, start: tmpStartTime , end: tmpEndTime })
+                let newDateStart = new Date(tmpStartTime.getTime() + tmpStartTime.getTimezoneOffset() * 60 * 1000); //convert start time to local time from UTC
+                let offsetStart = tmpStartTime.getTimezoneOffset() / 60;
+                let hoursStart = tmpStartTime.getHours();
+                newDateStart.setHours(hoursStart - offsetStart);
+
+                let newDateEnd = new Date(tmpEndTime.getTime() + tmpEndTime.getTimezoneOffset() * 60 * 1000); //convert end time to local time from UTC
+                let offsetEnd = tmpEndTime.getTimezoneOffset() / 60;
+                let hoursEnd = tmpEndTime.getHours();
+                newDateEnd.setHours(hoursEnd - offsetEnd);
+
+                eventsFromDb.push({ id, title, start: newDateStart , end: newDateEnd })
             }
             
             setEvents(eventsFromDb); //sets the events to the ones pulled from backend
@@ -84,9 +94,8 @@ const UserCalendar = () => {
         updateEndDate({ ...endDate, date: combinedDate })
     },[])
 
+    // click event for clicking on an item in the time table
     const f = (e) => {
-        //setBCView("week"); //when you click on something in the month calendar, it goes to the weeks calendar
-
         let selectedEventStartDate = new Date(e.start);
 
         let selectedEventStartDateD = CreateDateFormatArray(selectedEventStartDate);
@@ -95,7 +104,7 @@ const UserCalendar = () => {
 
         let selectedEventEndDateD = CreateDateFormatArray(selectedEventEndDate);
 
-        console.log(selectedEventStartDateD);
+        //console.log(selectedEventStartDateD);
 
         updatedSelectedEvents({
             "id": e.id,
@@ -118,13 +127,15 @@ const UserCalendar = () => {
             "seconds": selectedEventEndDate.getSeconds()
         })
 
+        // clear the error message every time you click on a time table slot
         updateErrorMessage("");
         updateErrorMessageDetail("");
 
-        console.log(selectedEventStartDate);
+        //console.log(selectedEventStartDate);
         //console.log(selectedEvents);
     }
 
+    // update start date whenever a number is updated
     const updateStartDates = (e) => {
         switch(e.target.id) {
             case 'startDate':
@@ -142,9 +153,9 @@ const UserCalendar = () => {
             default:
                 break;
         }
-        
     }
 
+    // update whenever an end date is updated
     const updateEndDates = (e) => {
         switch(e.target.id) {
             case 'endDate':
@@ -164,6 +175,7 @@ const UserCalendar = () => {
         }
     }
 
+    // update start date detail
     const updateStartDatesDetail = (e) => {
         switch(e.target.id) {
             case 'startDateDetail':
@@ -183,6 +195,7 @@ const UserCalendar = () => {
         }
     }
 
+    // update end date detail
     const updateEndDatesDetail = (e) => {
         switch(e.target.id) {
             case 'endDateDetail':
@@ -202,6 +215,7 @@ const UserCalendar = () => {
         }
     }
 
+    // making a new event on a calendar
     const onSubmit = (e) => {
         e.preventDefault()
 
@@ -233,14 +247,14 @@ const UserCalendar = () => {
             return;
         }
 
-        //POST TO BACKEND
+        //POST TO BACKEND in UTC
         let postObject = {
             ActivityName: eventTitle,
             ActivityStartTime: finalStartDate.toISOString(),
             ActivityEndTime: finalEndDate.toISOString()
         }
 
-        console.log(postObject);
+        //console.log(postObject);
 
         let config = {
             headers: { Authorization: `Bearer ${user.token}` }
@@ -257,6 +271,7 @@ const UserCalendar = () => {
         })
     }
 
+    // updating an event
     const onUpdateEvent = (e) => {
         e.preventDefault();
 
@@ -311,7 +326,7 @@ const UserCalendar = () => {
             headers: { Authorization: `Bearer ${user.token}` }
         }
 
-        console.log(putObj)
+        //console.log(putObj)
 
         axios.put(`https://${domain}/api/Activities`, putObj, config)
         .then(function(response) {
@@ -324,6 +339,7 @@ const UserCalendar = () => {
         });
     }
 
+    // deleting an event
     const onDeleteEvent = (e) => {
         e.preventDefault();
 
