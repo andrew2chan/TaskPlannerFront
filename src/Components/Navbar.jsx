@@ -19,7 +19,7 @@ const Navbar = () => {
             dispatch(updatePlannedTasksId(localStorage.getItem("plannedTasksId")));
             dispatch(updateToken(localStorage.getItem("token")));
         }
-    },[])
+    },[dispatch])
 
     useEffect(() => {
         updateCurrId(idFromRedux);
@@ -43,7 +43,7 @@ const Navbar = () => {
             <div className="logo"><Link to="/"><img src="https://helios-i.mashable.com/imagery/articles/00apgKgIAO4EnFfjOgCApRe/hero-image.fill.size_1200x1200.v1619086604.jpg" className="logo" alt="logo" /></Link></div>
             <div className="login-register-buttons">
                 {
-                    id == -1 ? (
+                    id === -1 ? (
                         <>
                             <Link to="register" className="redirect-buttons">Register</Link>
                             <Link to="login" className="redirect-buttons">Login</Link>

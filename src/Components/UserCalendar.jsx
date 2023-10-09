@@ -53,11 +53,11 @@ const UserCalendar = () => {
 
         axios.get(`https://${domain}/api/Activities/userActivity/${user.id}`, config)
         .then(function(response) {
-            console.log(response);
+            //console.log(response);
             
             let eventsFromDb = []; //makes a new events array
             for(let i = 0; i < response.data.length; i++) { //go through each event we get back from backend
-                const { id, activityName: title, activityStartTime, activityEndTime, plannedTaskId } = response.data[i]; //destructure
+                const { id, activityName: title, activityStartTime, activityEndTime } = response.data[i]; //destructure
                 let tmpStartTime = new Date(activityStartTime);
                 let tmpEndTime = new Date(activityEndTime);
 
@@ -82,7 +82,7 @@ const UserCalendar = () => {
     }
 
 
-    useEffect(pullEventsFromBackend,[user]);
+    useEffect(pullEventsFromBackend,[user, domain]);
 
     useEffect(function() {
         let currDate = new Date();
@@ -90,9 +90,9 @@ const UserCalendar = () => {
         let combinedDate = d.join("-");
         updateCurrentDate(combinedDate);
 
-        updateStartDate({ ...startDate, date: combinedDate })
-        updateEndDate({ ...endDate, date: combinedDate })
-    },[])
+        updateStartDate({  date: combinedDate, "hours": 0, "minutes": 0, "seconds": 0 })
+        updateEndDate({ date: combinedDate, "hours": 0, "minutes": 0, "seconds": 0 })
+    }, [])
 
     // click event for clicking on an item in the time table
     const f = (e) => {
@@ -242,7 +242,7 @@ const UserCalendar = () => {
             return;
         }
 
-        if(eventTitle.length == 0) {
+        if(eventTitle.length === 0) {
             updateErrorMessage("Please make sure to enter an event title");
             return;
         }
@@ -309,7 +309,7 @@ const UserCalendar = () => {
             return;
         }
 
-        if(detailEventTitle == 0) {
+        if(detailEventTitle === 0) {
             updateErrorMessageDetail("Please make sure to enter an event title");
             return;
         }
@@ -435,7 +435,7 @@ const UserCalendar = () => {
                         </div>
                         <button name="submit" onClick={onSubmit}>Submit</button>
 
-                        {errorMessage != "" && (
+                        {errorMessage !== "" && (
                         <>
                             <br/><br/>
                             <div className="error-message-usercalendar">
@@ -488,7 +488,7 @@ const UserCalendar = () => {
                             <button name="updateEvent" onClick={onUpdateEvent}>Update</button>
                             <button name="deleteEvent" onClick={onDeleteEvent}>Delete</button>
 
-                            {errorMessageDetail != "" && (
+                            {errorMessageDetail !== "" && (
                             <>
                                 <br/><br/>
                                 <div className="error-message-usercalendar">

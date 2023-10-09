@@ -18,9 +18,9 @@ const Profile = () => {
 
     useEffect(() => {
         updateClientInputs({
-            ...clientInputs,
             "Name": dataFromSelector.name,
-            "Email": dataFromSelector.email
+            "Email": dataFromSelector.email,
+            "Password": ""
         })
     }, [dataFromSelector])
 
@@ -53,7 +53,13 @@ const Profile = () => {
             headers: { Authorization: `Bearer ${dataFromSelector.token}` }
         }
 
-        axios.put(`https://${domain}/api/User/${dataFromSelector.id}`, clientInputs, config)
+        let clientInputsObj = {
+            "Name": clientInputs.Name,
+            "Email": clientInputs.Email,
+            "Password": clientInputs.Password
+        }
+
+        axios.put(`https://${domain}/api/User/${dataFromSelector.id}`, clientInputsObj, config)
         .then(function(response) {
             updateErrorMessage("Records have been updated!");
 
@@ -117,7 +123,7 @@ const Profile = () => {
                 <button name="submit" onClick={onSubmitStop}>Update</button>
                 <Link to="/" className="redirect-buttons" onClick={deleteAccount}>Delete Account</Link>
 
-                {errorMessage != "" && (
+                {errorMessage !== "" && (
                 <>
                     <br/><br/>
                     <div className="error-message-profile">

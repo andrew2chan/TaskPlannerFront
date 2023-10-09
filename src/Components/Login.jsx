@@ -76,7 +76,7 @@ const Login = () => {
                 </label>
                 <button type="button" name="submit" onClick={onSubmitStop}>Submit</button>
 
-                {errorMessage != "" && (
+                {errorMessage !== "" && (
                 <>
                     <br/><br/>
                     <div className="error-message">

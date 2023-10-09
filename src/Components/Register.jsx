@@ -44,7 +44,7 @@ const Register = () => {
         .catch(function(error) {
             console.log(error);
             updateErrorMessage("Please make sure all fields are answered and valid.");
-            if(error.response && error.response.status == 422) updateErrorMessage("Email already in use");
+            if(error.response && error.response.status === 422) updateErrorMessage("Email already in use");
         });
     }
 
@@ -68,7 +68,7 @@ const Register = () => {
                 </label>
                 <button type="button" name="submit" onClick={onSubmitStop}>Submit</button>
 
-                {errorMessage != "" && (
+                {errorMessage !== "" && (
                 <>
                     <br/><br/>
                     <div className="error-message-registration">
