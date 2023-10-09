@@ -391,8 +391,6 @@ const UserCalendar = () => {
                 endAccessor="end"
                 style={{ height: 500 }}
                 onSelectEvent={f}
-                //view={bcView}
-                //onView={setBCView}
             />
 
             <div className="inline-containers">
